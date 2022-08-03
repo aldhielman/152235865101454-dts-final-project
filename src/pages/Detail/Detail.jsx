@@ -16,15 +16,19 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import React from "react";
+import numeral from "numeral";
+import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   buildStyles,
   CircularProgressbarWithChildren,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { useNavigate, useParams } from "react-router-dom";
+import { Navbar } from "../../components";
 
 import cardBg from "../../static/card-bg.jpg";
+import { prettyPrintStat } from "../../utils";
 
 ChartJS.register(
   CategoryScale,
@@ -77,20 +81,44 @@ export const data = {
 };
 
 const Detail = () => {
+  const { countryId } = useParams();
+
+  const navigate = useNavigate();
+
+  const [country, setCountry] = useState({});
+
+  useEffect(() => {
+    fetch(`https://disease.sh/v3/covid-19/countries/${countryId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setCountry(data);
+      });
+  }, [countryId]);
+
+  console.log(country);
   return (
     <Grid container>
+      <Navbar />
       {/* overview card 1 */}
-      <Button>Back To Home</Button>
-      <Grid item display="flex" xs={12}>
-        <Grid component={Paper} xs={12} md={6} padding={2}>
+      <Grid item display="flex" xs={12} mt={2}>
+        <Button
+          color="error"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          Back To Home
+        </Button>
+        <Grid item component={Paper} xs={12} md={6} padding={2}>
           {/* flag */}
           <Box>
             <img
               style={{ width: "25px", marginRight: "2px" }}
-              src="https://disease.sh/assets/img/flags/id.png"
+              src={country.countryInfo?.flag}
+              alt="country-flag"
             />
             <Typography component="span" variant="body1">
-              Indonesia Overview
+              {country.country} Overview
             </Typography>
           </Box>
           <Box
@@ -105,13 +133,13 @@ const Detail = () => {
                 fontSize={{ md: 20, sm: 16, xs: 12 }}
                 color="error"
               >
-                6.210.794
+                {numeral(country.cases).format(0)}
               </Typography>
               <Typography color="text.secondary" fontSize={{ md: 12 }}>
                 Confirmed
               </Typography>
               <Typography color="error" fontSize={{ md: 12, xs: 6 }}>
-                +3.696 new cases
+                {prettyPrintStat(country.todayRecovered)}
               </Typography>
             </Box>
             <Box textAlign="center">
@@ -120,13 +148,13 @@ const Detail = () => {
                 fontSize={{ md: 20, sm: 16, xs: 12 }}
                 color="success.main"
               >
-                6.210.794
+                {numeral(country.recovered).format(0)}
               </Typography>
               <Typography color="text.secondary" fontSize={{ md: 12 }}>
                 Recovery
               </Typography>
               <Typography color="success.main" fontSize={{ md: 12, xs: 6 }}>
-                +3.696 new recovery
+                {prettyPrintStat(country.todayRecovered)}
               </Typography>
             </Box>
             <Box textAlign="center">
@@ -135,17 +163,13 @@ const Detail = () => {
                 fontSize={{ md: 20, sm: 16, xs: 12 }}
                 color="text.secondary"
               >
-                6.210.794
+                {numeral(country.deaths).format(0)}
               </Typography>
-              <Typography
-                fontWeight="bolder"
-                color="text.secondary"
-                fontSize={{ md: 12 }}
-              >
+              <Typography color="text.secondary" fontSize={{ md: 12 }}>
                 Death
               </Typography>
               <Typography color="text.secondary" fontSize={{ md: 12, xs: 6 }}>
-                +3.696 new deaths
+                {prettyPrintStat(country.todayDeaths)}
               </Typography>
             </Box>
           </Box>

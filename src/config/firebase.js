@@ -1,14 +1,8 @@
 import { initializeApp } from "firebase/app";
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  getAuth,
-  FacebookAuthProvider,
-  GithubAuthProvider,
-} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCzMSDrGvSe0WL5ZvbRQhTBQZhyZ8OPHBI",
+  apiKey: process.env.REACT_APP_FIREBASE_KEY,
   authDomain: "cvd19-tracker.firebaseapp.com",
   databaseURL: "https://cvd19-tracker.firebaseio.com",
   projectId: "cvd19-tracker",
@@ -20,40 +14,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 
-const app = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 
 export const auth = getAuth();
-
-const googleProvider = new GoogleAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
-const githubProvider = new GithubAuthProvider();
-
-export const signInWithGoogle = () => {
-  signInWithPopup(auth, googleProvider)
-    .then((res) => {
-      console.log(res.user);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
-export const signInWithFacebook = () => {
-  signInWithPopup(auth, facebookProvider)
-    .then((res) => {
-      console.log(res.user);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
-export const signInWithGithub = () => {
-  signInWithPopup(auth, githubProvider)
-    .then((res) => {
-      console.log(res.user);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};

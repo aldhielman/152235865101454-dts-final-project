@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from "react";
-import "./Home.css";
+import React, { useEffect, useState } from "react";
 import {
-  FormControl,
-  Select,
-  MenuItem,
   Card,
   CardContent,
+  Container,
+  Grid,
+  MenuItem,
+  Select,
+  Typography,
 } from "@mui/material";
-import { Map, InfoBox, LineGraph, Table } from "../../components";
-import { sortData, prettyPrintStat } from "../../utils";
-import numeral from "numeral";
+import { Box } from "@mui/system";
 import "leaflet/dist/leaflet.css";
+import numeral from "numeral";
+import { InfoBox, Map, Navbar, Table } from "../../components";
+import { prettyPrintStat, sortData } from "../../utils";
 
 // INDONESIA
 const defaultCenter = [-0.789275, 113.921327];
 
 const Home = () => {
   // LOCAL STATE
-  const [country, setInputCountry] = useState("worldwide");
+  const [selectedCountry, setSelectedCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState({});
   const [countries, setCountries] = useState([]);
   const [tableData, setTableData] = useState([]);
@@ -27,6 +29,7 @@ const Home = () => {
   const [casesType, setCasesType] = useState("cases");
 
   // EFFECT
+  // initial data
   useEffect(() => {
     fetch("https://disease.sh/v3/covid-19/all")
       .then((response) => response.json())
@@ -56,8 +59,9 @@ const Home = () => {
     getCountriesData();
   }, []);
 
-  const onCountryChanged = async (e) => {
+  const onSelectedCountryChanged = async (e) => {
     const countryCode = e.target.value;
+    setSelectedCountry(countryCode);
 
     await fetch(
       `https://disease.sh/v3/covid-19/${
@@ -66,7 +70,6 @@ const Home = () => {
     )
       .then((response) => response.json())
       .then((data) => {
-        setInputCountry(countryCode);
         setCountryInfo(data);
         setMapCenter([
           data.countryInfo?.lat ? data.countryInfo.lat : 34.80746,
@@ -77,15 +80,25 @@ const Home = () => {
   };
 
   return (
-    <div className="home">
-      <div className="home__left">
-        <div className="home__header">
-          <h1>COVID-19 Tracker</h1>
-          <FormControl className="home__dropdown">
+    <Container disableGutters maxWidth="xl">
+      <Navbar />
+      <Grid container spacing={2} padding={2}>
+        <Grid item xs={12} md={8}>
+          {/* FORM */}
+          <Box
+            display="flex"
+            alignItems="center"
+            marginBottom={2}
+            justifyContent="start"
+          >
+            <Typography mr={1}>Select Country : </Typography>
             <Select
+              size="small"
               variant="outlined"
-              value={country}
-              onChange={onCountryChanged}
+              value={selectedCountry}
+              onChange={(e) => {
+                onSelectedCountryChanged(e);
+              }}
             >
               <MenuItem value="worldwide">Worldwide</MenuItem>
               {countries.map(({ value, name }) => (
@@ -94,56 +107,58 @@ const Home = () => {
                 </MenuItem>
               ))}
             </Select>
-          </FormControl>
-        </div>
+          </Box>
 
-        <div className="home__stats">
-          <InfoBox
-            key="stats_case"
-            isRed
-            active={casesType === "cases"}
-            onClick={() => setCasesType("cases")}
-            title="Cases"
-            cases={prettyPrintStat(countryInfo.todayCases)}
-            total={numeral(countryInfo.cases).format("0.0a")}
-          />
-          <InfoBox
-            key="stats_recovered"
-            active={casesType === "recovered"}
-            onClick={() => setCasesType("recovered")}
-            title="Recovered"
-            cases={prettyPrintStat(countryInfo.todayRecovered)}
-            total={numeral(countryInfo.recovered).format("0.0a")}
-          />
-          <InfoBox
-            key="stats_deaths"
-            isRed
-            active={casesType === "deaths"}
-            onClick={() => setCasesType("deaths")}
-            title="Deaths"
-            cases={prettyPrintStat(countryInfo.todayDeaths)}
-            total={numeral(countryInfo.deaths).format("0.0a")}
-          />
-        </div>
+          {/* INFO BOX */}
+          <Box display={{ md: "flex" }} justifyContent="space-around">
+            <InfoBox
+              key="stats_case"
+              isRed
+              active={casesType === "cases"}
+              onClick={() => setCasesType("cases")}
+              title="Cases"
+              cases={prettyPrintStat(countryInfo.todayCases)}
+              total={numeral(countryInfo.cases).format("0.0a")}
+            />
+            <InfoBox
+              key="stats_recovered"
+              active={casesType === "recovered"}
+              onClick={() => setCasesType("recovered")}
+              title="Recovered"
+              cases={prettyPrintStat(countryInfo.todayRecovered)}
+              total={numeral(countryInfo.recovered).format("0.0a")}
+            />
+            <InfoBox
+              key="stats_deaths"
+              isRed
+              active={casesType === "deaths"}
+              onClick={() => setCasesType("deaths")}
+              title="Deaths"
+              cases={prettyPrintStat(countryInfo.todayDeaths)}
+              total={numeral(countryInfo.deaths).format("0.0a")}
+            />
+          </Box>
 
-        <Map
-          countries={mapCountries}
-          casesType={casesType}
-          center={mapCenter}
-          zoom={mapZoom}
-        />
-      </div>
-      <Card className="home__right">
-        <CardContent>
-          <div className="home__information">
-            <h3>Live Cases by Country</h3>
-            <Table countries={tableData} />
-            <h3>Historical {casesType}</h3>
-            <LineGraph casesType={casesType} countryCode={country} />
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          {/* MAP */}
+          <Box>
+            <Map
+              countries={mapCountries}
+              casesType={casesType}
+              center={mapCenter}
+              zoom={mapZoom}
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Card>
+            <CardContent>
+              <h3>Live Cases by Country</h3>
+              <Table countries={tableData} />
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 

@@ -11,7 +11,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="#">
-        Covid-19 Tracker
+        Thoriq Rivaldi Novendra - Covid-19 Tracker
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

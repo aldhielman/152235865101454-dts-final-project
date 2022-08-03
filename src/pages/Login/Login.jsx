@@ -1,17 +1,18 @@
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Paper } from "@mui/material";
+import { Alert, Paper } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
-import Grid from "@mui/material/Grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import * as React from "react";
-import { Link } from "react-router-dom";
-import { SocialLogin, Copyright } from "../../components";
+import { useNavigate } from "react-router-dom";
+import { Copyright, SocialLogin } from "../../components";
+import { auth } from "../../config/firebase";
 import backgroundImage from "../../static/background.jpg";
 
 const theme = createTheme({
@@ -21,13 +22,22 @@ const theme = createTheme({
 });
 
 export default function Login() {
-  const handleSubmit = (event) => {
+  const [error, setError] = React.useState(null);
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const email = data.get("email");
+    const password = data.get("password");
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/");
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   return (
@@ -45,6 +55,7 @@ export default function Login() {
       ></Box>
       <Container component="main" maxWidth="sm">
         <CssBaseline />
+
         <Box
           component={Paper}
           sx={{
@@ -96,21 +107,28 @@ export default function Login() {
             >
               Login
             </Button>
+            {error && <Alert severity="error">{error}</Alert>}
 
-            <SocialLogin />
-            <Grid container>
-              <Grid item xs>
-                <Link to="/" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link to={"register"}>{"Don't have an account? Register"}</Link>
-              </Grid>
-            </Grid>
+            <SocialLogin setError={setError} />
+            <Box display="flex" justifyContent="space-between">
+              <Button
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                Back To Homepage
+              </Button>
+              <Button
+                onClick={() => {
+                  navigate("/register");
+                }}
+              >
+                Register
+              </Button>
+            </Box>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 4, mb: 4 }} />
+        <Copyright sx={{ mt: 1 }} />
       </Container>
     </ThemeProvider>
   );

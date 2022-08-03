@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Line } from "react-chartjs-2";
 import numeral from "numeral";
-import { Chart as ChartJS } from "chart.js/auto";
+import React, { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
 
 const options = {
   legend: {

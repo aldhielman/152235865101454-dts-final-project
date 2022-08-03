@@ -1,20 +1,55 @@
 import { Facebook, GitHub, Google } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography } from "@mui/material";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { Box, Divider, IconButton } from "@mui/material";
 import {
-  signInWithGoogle,
-  signInWithFacebook,
-  signInWithGithub,
-  auth,
-} from "../../config/firebase";
+  FacebookAuthProvider,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../../config/firebase";
 
-function SocialLogin() {
-  const [user] = useAuthState(auth);
+const googleProvider = new GoogleAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
+const githubProvider = new GithubAuthProvider();
+
+const SocialLogin = ({ setError }) => {
+  const navigate = useNavigate();
+
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((res) => {
+        navigate("/");
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
+  };
+
+  const signInWithFacebook = () => {
+    signInWithPopup(auth, facebookProvider)
+      .then((res) => {
+        navigate("/");
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
+  };
+
+  const signInWithGithub = () => {
+    signInWithPopup(auth, githubProvider)
+      .then((res) => {
+        navigate("/");
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
+  };
+
   return (
     <Box>
       <Divider>Login With</Divider>
-      <Typography>{user?.displayName}</Typography>
       <Box display="flex" justifyContent="center">
         <IconButton
           color="error"
@@ -43,6 +78,6 @@ function SocialLogin() {
       </Box>
     </Box>
   );
-}
+};
 
 export default SocialLogin;

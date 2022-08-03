@@ -1,8 +1,5 @@
-import React from "react";
-import "./Table.css";
-import numeral from "numeral";
-import { Link, useNavigate } from "react-router-dom";
 import {
+  Button,
   Paper,
   Table as MuiTable,
   TableBody,
@@ -11,12 +8,14 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import numeral from "numeral";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./Table.css";
 
 function Table({ countries }) {
   const navigate = useNavigate();
-  const handleOnclick = (e, countryId) => {
-    navigate("/" + countryId);
-  };
+
   console.log(countries);
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -30,9 +29,19 @@ function Table({ countries }) {
           </TableHead>
           <TableBody>
             {countries.map((country) => (
-              <TableRow>
+              <TableRow key={country.country}>
                 <TableCell>{country.country}</TableCell>
-                <TableCell>{country.country}</TableCell>
+                <TableCell>{numeral(country.cases).format(0)}</TableCell>
+                <TableCell>
+                  <Button
+                    onClick={() => {
+                      navigate(`/country/${country.countryInfo.iso2}`);
+                    }}
+                    size="small"
+                  >
+                    View
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -40,21 +49,6 @@ function Table({ countries }) {
       </TableContainer>
     </Paper>
   );
-  // return (
-  //   <div className="table">
-  //     {countries.map((country) => (
-  //       <tr
-  //         key={country.country}
-  //         onClick={(e) => handleOnclick(e, country.countryInfo.iso2)}
-  //       >
-  //         <td>{country.country}</td>
-  //         <td>
-  //           <strong>{numeral(country.cases).format(0)}</strong>
-  //         </td>
-  //       </tr>
-  //     ))}
-  //   </div>
-  // );
 }
 
 export default Table;

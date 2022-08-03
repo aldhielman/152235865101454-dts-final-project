@@ -11,17 +11,15 @@ function InfoBox({ title, cases, isRed, active, total, ...props }) {
       onClick={props.onClick}
     >
       <CardContent>
-        <Typography gutterBottom color="textSecondary">
-          {title}
-        </Typography>
+        <Typography color="textSecondary">{title}</Typography>
         <Typography
-          fontSize={{ xs: 12, md: 36 }}
+          fontSize={36}
           className={`infoBox__cases ${!isRed && "infoBox__cases--green"}`}
         >
           {cases}
         </Typography>
         <Typography
-          fontSize={{ xs: 12, md: 36 }}
+          fontSize={36}
           className="infoBox__total"
           color="textSecondary"
         >
