@@ -67,6 +67,7 @@ export default function MenuAppBar() {
                 color="inherit"
               >
                 <Avatar src={user?.photoURL} />
+                <Typography>{user?.displayName}</Typography>
               </IconButton>
               <Menu
                 id="menu-appbar"

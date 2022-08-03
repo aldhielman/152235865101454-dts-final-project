@@ -7,6 +7,7 @@ import MapMarker from "./MapMarker/MapMarker";
 import SetMapView from "./SetMapView/SetMapView";
 import SocialLogin from "./SocialLogin/SocialLogin";
 import Copyright from "./Copyright/Copyright";
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 
 export {
   Navbar,
@@ -18,4 +19,5 @@ export {
   SetMapView,
   SocialLogin,
   Copyright,
+  ProtectedRoute,
 };

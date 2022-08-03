@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_KEY,
+  apiKey: "AIzaSyCzMSDrGvSe0WL5ZvbRQhTBQZhyZ8OPHBI",
   authDomain: "cvd19-tracker.firebaseapp.com",
   databaseURL: "https://cvd19-tracker.firebaseio.com",
   projectId: "cvd19-tracker",

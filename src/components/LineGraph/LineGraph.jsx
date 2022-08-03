@@ -1,39 +1,66 @@
 import numeral from "numeral";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from "chart.js";
 import { Line } from "react-chartjs-2";
 
-const options = {
-  legend: {
-    display: false,
-  },
-  elements: {
-    point: {
-      radius: 0,
-    },
-  },
-  maintainAspectRatio: false,
-  tooltips: {
-    mode: "index",
-    intersect: false,
-    callbacks: {
-      label: function (tooltipItem, data) {
-        return numeral(tooltipItem.value).format("+0.0");
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
+
+function LineGraph({ countryId, casesType, lastDays = 30, ...props }) {
+  const [data, setData] = useState([]);
+
+  const options = {
+    responsive: true,
+    plugins: {
+      title: {
+        text: props.title,
+        display: true,
       },
-    },
-  },
-  scales: {
-    xAxes: [
-      {
-        type: "time",
-        time: {
-          format: "MM/DD/YY",
-          tooltipFormat: "ll",
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        mode: "index",
+        intersect: false,
+        callbacks: {
+          label: function (tooltipItem, data) {
+            return numeral(tooltipItem.value).format("+0.0");
+          },
         },
       },
-    ],
-    yAxes: [
-      {
-        gridLines: {
+    },
+    hover: {
+      mode: "index",
+      intersec: false,
+    },
+    elements: {
+      point: {
+        radius: 0,
+      },
+    },
+    maintainAspectRatio: false,
+
+    scales: {
+      y: {
+        grid: {
           display: false,
         },
         ticks: {
@@ -42,36 +69,31 @@ const options = {
           },
         },
       },
-    ],
-  },
-};
+    },
+  };
 
-const buildChartData = (data, casesType) => {
-  const chartData = [];
-  let lastDataPoint;
+  const buildChartData = (data, casesType) => {
+    const chartData = [];
+    let lastDataPoint;
 
-  for (let date in data.cases) {
-    if (lastDataPoint) {
-      let newDataPoint = {
-        x: date,
-        y: data[casesType][date] - lastDataPoint,
-      };
-      chartData.push(newDataPoint);
+    for (let date in data.cases) {
+      if (lastDataPoint) {
+        let newDataPoint = {
+          x: date,
+          y: data[casesType][date] - lastDataPoint,
+        };
+        chartData.push(newDataPoint);
+      }
+      lastDataPoint = data[casesType][date];
     }
-    lastDataPoint = data[casesType][date];
-  }
-  return chartData;
-};
 
-function LineGraph({ casesType, countryCode }) {
-  const [data, setData] = useState({});
+    return chartData;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       await fetch(
-        `https://disease.sh/v3/covid-19/historical/${
-          countryCode === "worldwide" ? "all" : countryCode
-        }?lastdays=all`
+        `https://disease.sh/v3/covid-19/historical/${countryId}?lastdays=${lastDays}`
       )
         .then((response) => response.json())
         .then((data) => {
@@ -79,11 +101,12 @@ function LineGraph({ casesType, countryCode }) {
             data.timeline ? data.timeline : data,
             casesType
           );
+
           setData(chartData);
         });
     };
     fetchData();
-  }, [casesType, countryCode]);
+  }, [lastDays, casesType, countryId]);
 
   return (
     <div>
@@ -93,8 +116,10 @@ function LineGraph({ casesType, countryCode }) {
           data={{
             datasets: [
               {
-                backgroundColor: "rgba(204, 16, 52, 0.5)",
-                borderColor: "#CC1034",
+                fill: true,
+                label: props.title,
+                backgroundColor: props.backgroundColor,
+                borderColor: props.borderColor,
                 data: data,
               },
             ],

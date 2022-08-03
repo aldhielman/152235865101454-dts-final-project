@@ -7,78 +7,18 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import {
-  BarElement,
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  Title,
-  Tooltip,
-} from "chart.js";
 import numeral from "numeral";
 import React, { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
 import {
   buildStyles,
   CircularProgressbarWithChildren,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { Navbar } from "../../components";
+import { LineGraph, Navbar } from "../../components";
 
 import cardBg from "../../static/card-bg.jpg";
 import { prettyPrintStat } from "../../utils";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-export const options = {
-  plugins: {
-    title: {
-      display: true,
-      text: "Chart.js Bar Chart - Stacked",
-    },
-  },
-  responsive: true,
-  scales: {
-    x: {
-      stacked: true,
-    },
-    y: {
-      stacked: true,
-    },
-  },
-};
-
-const labels = ["January", "February", "March"];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Dataset 1",
-      data: [50, 100, 150],
-      backgroundColor: "rgb(255, 99, 132)",
-    },
-    {
-      label: "Dataset 2",
-      data: [50, 100, 150],
-      backgroundColor: "rgb(75, 192, 192)",
-    },
-    {
-      label: "Dataset 3",
-      data: [50, 100, 150],
-      backgroundColor: "rgb(53, 162, 235)",
-    },
-  ],
-};
 
 const Detail = () => {
   const { countryId } = useParams();
@@ -95,7 +35,6 @@ const Detail = () => {
       });
   }, [countryId]);
 
-  console.log(country);
   return (
     <Grid container>
       <Navbar />
@@ -118,7 +57,12 @@ const Detail = () => {
               alt="country-flag"
             />
             <Typography component="span" variant="body1">
-              {country.country} Overview
+              {country.country} Overview{" "}
+              <span
+                style={{ color: "green", fontSize: 8, fontStyle: "italic" }}
+              >
+                (last updated : {new Date(country.updated).toLocaleString()})
+              </span>
             </Typography>
           </Box>
           <Box
@@ -139,7 +83,7 @@ const Detail = () => {
                 Confirmed
               </Typography>
               <Typography color="error" fontSize={{ md: 12, xs: 6 }}>
-                {prettyPrintStat(country.todayRecovered)}
+                {prettyPrintStat(country.todayCases)}
               </Typography>
             </Box>
             <Box textAlign="center">
@@ -175,6 +119,7 @@ const Detail = () => {
           </Box>
         </Grid>
         <Grid
+          item
           xs={12}
           md={3}
           component={Paper}
@@ -186,14 +131,16 @@ const Detail = () => {
           {/* circle chart % */}
           <Box width={100} marginRight={5}>
             <CircularProgressbarWithChildren
-              value={66}
+              value={numeral((country.deaths / country.cases) * 100).format(0)}
               styles={buildStyles({
                 textColor: "red",
                 pathColor: "red",
               })}
             >
               <Box textAlign="center">
-                <Typography>66%</Typography>
+                <Typography>
+                  {numeral((country.deaths / country.cases) * 100).format(0)} %
+                </Typography>
                 <Typography fontSize={8} color="text.secondary">
                   OF TOTAL CASES
                 </Typography>
@@ -203,6 +150,7 @@ const Detail = () => {
           <Typography>Fatality Rate</Typography>
         </Grid>
         <Grid
+          item
           xs={12}
           md={3}
           component={Paper}
@@ -212,9 +160,16 @@ const Detail = () => {
         >
           {/* circle chart % */}
           <Box width={100} marginRight={5}>
-            <CircularProgressbarWithChildren value={66}>
+            <CircularProgressbarWithChildren
+              value={numeral((country.recovered / country.cases) * 100).format(
+                0
+              )}
+            >
               <Box textAlign="center">
-                <Typography>66%</Typography>
+                <Typography>
+                  {numeral((country.recovered / country.cases) * 100).format(0)}{" "}
+                  %
+                </Typography>
                 <Typography fontSize={8} color="text.secondary">
                   OF TOTAL CASES
                 </Typography>
@@ -226,7 +181,7 @@ const Detail = () => {
       </Grid>
       {/* overview card 2 */}
       <Grid marginTop={2} columnGap={2} item display="flex" md={12}>
-        <Grid md={4}>
+        <Grid item md={4}>
           <Card>
             <Box sx={{ position: "relative" }}>
               <CardMedia
@@ -240,13 +195,21 @@ const Detail = () => {
                 <Typography fontWeight="bold">
                   Critical Cases treated in ICU
                 </Typography>
-                <Typography>1.205</Typography>
-                <Typography>0.0% of total cases</Typography>
+                <Typography>{numeral(country.critical).format(0)}</Typography>
+                <Typography>
+                  <span style={{ color: "red" }}>
+                    {numeral((country.critical / country.cases) * 100).format(
+                      "0.00a"
+                    )}
+                    %
+                  </span>{" "}
+                  of total cases
+                </Typography>
               </Box>
             </Box>
           </Card>
         </Grid>
-        <Grid md={4}>
+        <Grid item md={4}>
           <Card>
             <Box sx={{ position: "relative" }}>
               <CardMedia
@@ -260,13 +223,21 @@ const Detail = () => {
                 <Typography fontWeight="bold">
                   Critical Cases treated in ICU
                 </Typography>
-                <Typography>1.205</Typography>
-                <Typography>0.0% of total cases</Typography>
+                <Typography>{numeral(country.active).format(0)}</Typography>
+                <Typography>
+                  <span style={{ color: "red" }}>
+                    {numeral((country.active / country.cases) * 100).format(
+                      "0.00a"
+                    )}
+                    %
+                  </span>{" "}
+                  of total cases
+                </Typography>
               </Box>
             </Box>
           </Card>
         </Grid>
-        <Grid md={4}>
+        <Grid item md={4}>
           <Card>
             <Box sx={{ position: "relative" }}>
               <CardMedia
@@ -277,27 +248,31 @@ const Detail = () => {
                 sx={{ opacity: 0.4 }}
               />
               <Box sx={{ position: "absolute", top: "10%", padding: 1 }}>
-                <Typography fontWeight="bold">
-                  Critical Cases treated in ICU
+                <Typography fontWeight="bold">Daily Confirmed Cases</Typography>
+                <Typography>
+                  {numeral(country.casesPerOneMillion).format(0)}
                 </Typography>
-                <Typography>1.205</Typography>
-                <Typography>0.0% of total cases</Typography>
+                <Typography>Per Million Population</Typography>
               </Box>
             </Box>
           </Card>
         </Grid>
       </Grid>
       {/* bar chart */}
-      <Grid item xs={12} display="flex">
-        <Grid xs={6}>
-          <Bar options={options} data={data} />;
-        </Grid>
-        <Grid xs={6}>
-          <Bar options={options} data={data} />;
-        </Grid>
+      <Grid item xs={12}>
+        <LineGraph
+          countryId={countryId}
+          casesType="cases"
+          title="Daily Cases"
+          backgroundColor="#cc1034"
+          borderColor="red"
+        />
+        <LineGraph
+          countryId={countryId}
+          casesType="deaths"
+          title="Daily Deaths"
+        />
       </Grid>
-      {/* bar chart incident daily */}
-      <Grid item></Grid>
     </Grid>
   );
 };

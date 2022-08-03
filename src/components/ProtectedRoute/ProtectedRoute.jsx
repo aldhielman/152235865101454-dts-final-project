@@ -1,8 +1,8 @@
 import React from "react";
-import { auth } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Navigate } from "react-router-dom";
 import { LinearProgress } from "@mui/material";
+import { auth } from "../../config/firebase";
 
 export default function ProtectedRoute({ children, loginOnly = true }) {
   const [user, loading, error] = useAuthState(auth);
