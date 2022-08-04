@@ -1,5 +1,12 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  getFirestore,
+  serverTimestamp,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCzMSDrGvSe0WL5ZvbRQhTBQZhyZ8OPHBI",
@@ -14,6 +21,24 @@ const firebaseConfig = {
 
 // Initialize Firebase
 
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+export const createReview = (message, rating, username, photoUrl) => {
+  const reviewsColRef = collection(db, "reviews");
+
+  return addDoc(reviewsColRef, {
+    message,
+    rating,
+    username,
+    photoUrl,
+    createdAt: serverTimestamp(),
+  });
+};
+
+export const getReviews = () => {
+  const reviewsColRef = collection(db, "reviews");
+  return getDocs(reviewsColRef);
+};
 
 export const auth = getAuth();

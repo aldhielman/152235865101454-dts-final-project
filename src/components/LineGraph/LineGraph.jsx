@@ -60,6 +60,7 @@ function LineGraph({ countryId, casesType, lastDays = 30, ...props }) {
 
     scales: {
       y: {
+        // min: 0,
         grid: {
           display: false,
         },
@@ -87,7 +88,7 @@ function LineGraph({ countryId, casesType, lastDays = 30, ...props }) {
       lastDataPoint = data[casesType][date];
     }
 
-    return chartData;
+    return chartData.filter((d) => d.y > 0);
   };
 
   useEffect(() => {

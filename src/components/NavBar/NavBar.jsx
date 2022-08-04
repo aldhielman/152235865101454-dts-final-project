@@ -49,13 +49,15 @@ export default function MenuAppBar() {
             onClick={() => navigate("/")}
           ></Coronavirus>
           <Typography
-            variant="h6"
-            component="div"
+            variant="body2"
             onClick={() => navigate("/")}
             sx={{ flexGrow: 1, cursor: "pointer" }}
           >
             COVID-19 TRACKER
           </Typography>
+          <Button onClick={() => navigate("/review")} color="inherit">
+            Review
+          </Button>
           {user ? (
             <div>
               <IconButton
@@ -67,7 +69,9 @@ export default function MenuAppBar() {
                 color="inherit"
               >
                 <Avatar src={user?.photoURL} />
-                <Typography>{user?.displayName}</Typography>
+                <Typography display={{ xs: "none" }}>
+                  {user?.displayName}
+                </Typography>
               </IconButton>
               <Menu
                 id="menu-appbar"

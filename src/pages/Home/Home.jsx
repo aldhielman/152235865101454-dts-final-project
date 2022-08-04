@@ -110,6 +110,11 @@ const Home = () => {
           </Box>
 
           {/* INFO BOX */}
+          <Typography component="span" variant="body1">
+            <span style={{ color: "green", fontSize: 8, fontStyle: "italic" }}>
+              (last updated : {new Date(countryInfo.updated).toLocaleString()})
+            </span>
+          </Typography>
           <Box display={{ md: "flex" }} justifyContent="space-around">
             <InfoBox
               key="stats_case"

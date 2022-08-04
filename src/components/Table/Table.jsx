@@ -16,15 +16,15 @@ import "./Table.css";
 function Table({ countries }) {
   const navigate = useNavigate();
 
-  console.log(countries);
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: "100vh" }}>
         <MuiTable stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
               <TableCell>Country</TableCell>
               <TableCell>Cases</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

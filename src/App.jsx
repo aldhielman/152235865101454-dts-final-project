@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./components";
-import { Detail, Home, Login, NotFound404, Register } from "./pages";
+import { Detail, Home, Login, NotFound404, Register, Review } from "./pages";
 
 function App() {
   return (
@@ -20,6 +20,14 @@ function App() {
           element={
             <ProtectedRoute loginOnly={false}>
               <Register />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/review"
+          element={
+            <ProtectedRoute>
+              <Review />
             </ProtectedRoute>
           }
         />
