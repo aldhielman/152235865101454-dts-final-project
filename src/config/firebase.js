@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCzMSDrGvSe0WL5ZvbRQhTBQZhyZ8OPHBI",
+  apiKey: process.env.REACT_APP_FIREBASE_KEY,
   authDomain: "cvd19-tracker.firebaseapp.com",
   databaseURL: "https://cvd19-tracker.firebaseio.com",
   projectId: "cvd19-tracker",
